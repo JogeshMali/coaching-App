@@ -1,110 +1,116 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import Colors from '@/app/constant/Colors';
+import { imageAssets } from '@/app/constant/Option';
+import { db } from '@/config/firebaseConfigs';
+import { UserDetailContext } from '@/context/userContext';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useRouter } from 'expo-router';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import React, { useContext, useEffect, useState } from 'react';
+import { FlatList, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { CourseList } from '../constant/CourseListInterface';
+import { courseList } from '../constant/courselist';
+type CourseType = {
+  id: string;
+  course?: CourseList;
+};
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+export default function Explore() {
+  const router = useRouter();
+  const { userDetail } = useContext(UserDetailContext);
+  const [filteredCourses, setFilteredCourses] = useState<CourseType[]>([]);
 
-export default function TabTwoScreen() {
+  useEffect(() => {
+    if (userDetail?.email) {
+      getFilteredCourses();
+    }
+  }, [userDetail]);
+
+  const getFilteredCourses = async () => {
+    try {
+      const q = query(collection(db, 'Courses'), where('createdBy', '==', userDetail?.email));
+      const querySnapshot = await getDocs(q);
+      const userCourses = querySnapshot.docs.map((doc) => doc.data().course.courseTitle);
+      console.log('usercourse',userCourses)
+
+      // Convert static courseList to CourseType[]
+      const formattedCourses: CourseType[] = courseList.courses.map((item, index) => ({
+        id: '',
+        course: item,
+      }));
+
+      // Filter out the ones that exist in userCourses by courseTitle
+      const filtered = formattedCourses.filter(
+        (course) => !userCourses.includes(course.course?.courseTitle)
+      );
+
+      setFilteredCourses(filtered);
+    } catch (e) {
+      console.error('Error filtering courses:', e);
+    }
+  };
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <ScrollView style={{ marginTop: 20, padding: 20 }}>
+      <Text style={{ fontFamily: 'outfit-bold', fontSize: 25 }}>Courses</Text>
+
+      <FlatList
+        data={filteredCourses}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={{
+              display: 'flex',
+              width: '95%',
+              borderWidth: 1,
+              backgroundColor: Colors.BG_GRAY,
+              padding: 10,
+              margin: 10,
+              borderRadius: 15,
+            }}
+            onPress={() =>
+              router.push({
+                pathname: '/CourseView',
+                params: { courseParams: JSON.stringify({ item }) ,enroll:'true'},
+              })
+            }
+          >
+            {item?.course?.banner_image && (
+              <Image
+                style={{
+                  width: '100%',
+                  height: 180,
+                  borderRadius: 15,
+                }}
+                source={imageAssets[item.course.banner_image]}
+              />
+            )}
+            <Text
+              style={{
+                fontFamily: 'outfit-bold',
+                fontSize: 20,
+                marginTop: 5,
+                marginLeft: 5,
+              }}
+            >
+              {item?.course?.courseTitle}
+            </Text>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 5,
+                marginTop: 3,
+                marginLeft: 5,
+              }}
+            >
+              <Ionicons name="book-outline" size={16} color={Colors.BLACK} />
+              <Text style={{ fontFamily: 'outfit' }}>
+                {item?.course?.chapters?.length || 0} Chapters
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-});
