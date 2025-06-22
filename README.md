@@ -1,50 +1,32 @@
-# Welcome to your Expo app 👋
+# 🎓 Coaching App – React Native + Firebase
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+The Coaching App is a E-learning solution developed using **React Native**, designed to facilitate structured course delivery and learner engagement in a digital environment. Built with scalability in mind, the app provides an intuitive interface where users can explore educational content, participate in course activities, and monitor their learning progress.
 
-## Get started
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## ✨ Features
 
-2. Start the app
+- 🔐 **User Authentication**: Login & signup with Firebase Auth
+- 📚 **Course Catalog**: List and explore multiple learning courses
+- ✅ **Course Enrollment**: Users can enroll and begin lessons
+- 📈 **Progress Tracking**: Track course completion status per user
+- 📝 **Assignments**: Submit and view assignment tasks
+- 🧠 **Flashcards**: Revise topics with built-in flashcard decks
+- ❓ **Q&A Section**: View common questions with expert answers
+- ☁️ **Firebase Integration**: Real-time updates and secure storage
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 🛠 Tech Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+| Component       | Technology             |
+|------------------|-------------------------|
+| Frontend         | React Native (TypeScript) |
+| Backend          | Firebase Firestore       |
+| Authentication   | Firebase Auth            |
+| Storage (optional) | Firebase Storage       |
+| State Management | Context API / useState   |
+| Navigation       | React Navigation         |
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
